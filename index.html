@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title></title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">        
+    </head>
+    <body>
+        <h1>Pixelated image</h1>
+        
+        <p>Change pixel resolution <input type="range" min="4" max="100" value="32" id="range" /> <span id="output">32</span></p>
+
+        <div>
+            <img src="resources/img/boticelli_venus_and_mars_1483.jpg" id="image1" />
+        </div>        
+        
+        
+        
+        <script src="resources/js/close-pixelate.js"></script>
+        <script>
+        window.onload = function() {
+            var image1 = document.getElementById('image1');
+
+            var pixelOpts = [ { resolution: 32 } ];
+            var pixelImage1 = image1.closePixelate( pixelOpts );
+
+            var range = document.getElementById('range');
+            var output = document.getElementById('output');
+
+            range.addEventListener( 'change', function( event ) {
+                var res = parseInt( event.target.value, 10 );
+                res = Math.floor( res / 2 ) * 2;
+                res = Math.max( 4, Math.min( 100, res ) );
+                output.textContent = res;
+
+                pixelOpts = [ { resolution: res } ];
+                pixelImage1.render( pixelOpts );
+            }, false );
+        };
+        </script>        
+    </body>
+</html>
