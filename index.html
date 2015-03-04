@@ -8,35 +8,34 @@
     <body>
         <h1>Pixelated image</h1>
         
-        <p>Change pixel resolution <input type="range" min="4" max="100" value="32" id="range" /> <span id="output">32</span></p>
+        <p>Change pixel resolution <input type="range" min="4" max="100" value="32" id="range" autocomplete="off" /> <span id="output">32</span></p>
 
         <div>
-            <img src="resources/img/boticelli_venus_and_mars_1483.jpg" id="image1" />
+            <img src="resources/img/boticelli_venus_and_mars_1483.jpg" id="target_image" />
         </div>        
         
-        
+        <script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
         
         <script src="resources/js/close-pixelate.js"></script>
         <script>
-        window.onload = function() {
-            var image1 = document.getElementById('image1');
+        $(function() {
+            var $image  = $('#target_image');
+            var $range  = $('#range');
+            var $output = $('#output');            
 
-            var pixelOpts = [ { resolution: 32 } ];
-            var pixelImage1 = image1.closePixelate( pixelOpts );
+            var pixelOpts = [{resolution: 32}];
+            var pixelImage = $image.get(0).closePixelate(pixelOpts);            
 
-            var range = document.getElementById('range');
-            var output = document.getElementById('output');
+            $range.on("change mousemove", function() {
+                var res = parseInt( this.value, 10 );
+                res = Math.floor(res / 2) * 2;
+                res = Math.max(4, Math.min(100, res));
+                $output.text(res);
 
-            range.addEventListener( 'change', function( event ) {
-                var res = parseInt( event.target.value, 10 );
-                res = Math.floor( res / 2 ) * 2;
-                res = Math.max( 4, Math.min( 100, res ) );
-                output.textContent = res;
-
-                pixelOpts = [ { resolution: res } ];
-                pixelImage1.render( pixelOpts );
-            }, false );
-        };
+                pixelOpts = [{resolution: res}];
+                pixelImage.render(pixelOpts);
+            });
+        });
         </script>        
     </body>
 </html>
