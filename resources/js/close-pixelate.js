@@ -178,7 +178,8 @@
 
 
 function getSimilarColors (color_r, color_g, color_b) {
-    var base_colors=["660000","990000","cc0000"];
+    //var base_colors=["660000","990000","cc0000"];
+    var base_colors = [array("66", "00", "00")];
 
     //Create an emtyp array for the difference betwwen the colors
     var differenceArray=[];
