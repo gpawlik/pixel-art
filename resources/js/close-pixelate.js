@@ -1,15 +1,16 @@
 /*!
- * Close Pixelate v2.0.00 beta
- * http://desandro.com/resources/close-pixelate/
+ * Pixel Art v1.0.00 beta
+ * https://github.com/gpawlik/pixel-art
  * 
  * Developed by
- * - David DeSandro  http://desandro.com
- * - John Schulz  http://twitter.com/jfsiii
+ * - Grzegorz Pawlik http://gpawlik.com 
+ * 
+ * Based on
+ * - close-pixelate script by 
+ * David DeSandro http://desandro.com
  * 
  * Licensed under MIT license
  */
-
-/*jshint asi: true, browser: true, eqeqeq: true, forin: false, immed: false, newcap: true, noempty: true, strict: true, undef: true */
 
 ( function( window, undefined ) {
 
@@ -43,6 +44,8 @@
 
     function ClosePixelation( img, options ) {
         this.img = img;
+
+        console.log(options);
 
         // create canvas
         var canvas = this.canvas = document.createElement('canvas');
@@ -97,14 +100,14 @@
         var res = opts.resolution || 16;
         var size = opts.size || res;
         var alpha = opts.alpha || 1;
-        var offset = opts.offset || 0;
+        var offset = opts.offset || 0;        
         var offsetX = 0;
         var offsetY = 0;
         var cols = w / res + 1;
         var rows = h / res + 1;
         var halfSize = size / 2;
         var diamondSize = size / Math.SQRT2;
-        var halfDiamondSize = diamondSize / 2;
+        var halfDiamondSize = diamondSize / 2;        
 
         if ( isObject( offset ) ){ 
             offsetX = offset.x || 0;
@@ -128,20 +131,20 @@
                 x = ( col - 0.5 ) * res + offsetX;
 
                 // normalize y so shapes around edges get color
-                pixelX = Math.max( Math.min( x, w-1), 0);
-                pixelIndex = ( pixelX + pixelY * w ) * 4;
-                red   = imgData[ pixelIndex + 0 ];
-                green = imgData[ pixelIndex + 1 ];
-                blue  = imgData[ pixelIndex + 2 ];
-                pixelAlpha = alpha * ( imgData[ pixelIndex + 3 ] / 255);
+                pixelX = Math.max(Math.min( x, w-1), 0);
+                pixelIndex = (pixelX + pixelY * w ) * 4;
+                
+                var color = {
+                    color_r: imgData[ pixelIndex + 0 ],
+                    color_g: imgData[ pixelIndex + 1 ],
+                    color_b: imgData[ pixelIndex + 2 ]                       
+                };
 
-                ctx.fillStyle = 'rgba(' + red +','+ green +','+ blue +','+ pixelAlpha + ')';
+                pixelAlpha = alpha * (imgData[ pixelIndex + 3 ] / 255);            
                 
-                console.log('current color: rgba(' + red +','+ green +','+ blue +','+ pixelAlpha + ')');
+                var closest_color = this.getSimilarColor(opts, color);
                 
-                //getSimilarColors(red, green, blue);
-                
-                console.log('similar color: ', getSimilarColors(red, green, blue));
+                ctx.fillStyle = 'rgba(' + closest_color + ',' + pixelAlpha + ')';                                 
 
                 switch ( opts.shape ) {
                     case 'circle' :
@@ -165,6 +168,59 @@
         } // row
 
     };
+    
+    ClosePixelation.prototype.getSimilarColor = function( opts, color ) {        
+        var base_colors = opts.base_colors || ["000000","ffffff"];        
+        var color_r = color.color_r || 0;
+        var color_g = color.color_g || 0;
+        var color_b = color.color_b || 0;
+
+        //Create an empty array for the difference between the colors
+        var differenceArray=[];
+
+        //Function to find the smallest value in an array
+        Array.min = function( array ){
+            return Math.min.apply( Math, array );
+        };
+
+
+        //Convert the HEX color in the array to RGB colors, split them up to R-G-B, then find out the difference between the "color" and the colors in the array
+        $.each(base_colors, function(index, value) { 
+            var base_color_rgb = hex2rgb(value);
+            var base_colors_r = base_color_rgb.split(',')[0];
+            var base_colors_g = base_color_rgb.split(',')[1];
+            var base_colors_b = base_color_rgb.split(',')[2];
+
+            //Add the difference to the differenceArray
+            differenceArray.push(Math.sqrt((color_r-base_colors_r)*(color_r-base_colors_r)+(color_g-base_colors_g)*(color_g-base_colors_g)+(color_b-base_colors_b)*(color_b-base_colors_b)));
+        });
+
+        //Get the lowest number from the differenceArray
+        var lowest = Array.min(differenceArray);
+
+        //Get the index for that lowest number
+        var index = differenceArray.indexOf(lowest);
+
+        //Function to convert HEX to RGB
+        function hex2rgb( color ) {
+            var r, g, b;
+            if ( color.charAt(0) === '#' ) {
+                color = color.substr(1);
+            }
+
+            r = color.charAt(0) + color.charAt(1);
+            g = color.charAt(2) + color.charAt(3);
+            b = color.charAt(4) + color.charAt(5);
+
+            r = parseInt( r, 16 );
+            g = parseInt( g, 16 );
+            b = parseInt( b, 16 );
+            return r + ',' + g + ',' + b;
+        }
+
+        //Return the RGB code
+        return hex2rgb(base_colors[index]);        
+    };
 
     // enable img.closePixelate
     HTMLImageElement.prototype.closePixelate = function ( options ) {
@@ -175,56 +231,4 @@
     window.ClosePixelation = ClosePixelation;
 
 })( window );
-
-
-function getSimilarColors (color_r, color_g, color_b) {
-    //var base_colors=["660000","990000","cc0000"];
-    var base_colors = [array("66", "00", "00")];
-
-    //Create an emtyp array for the difference betwwen the colors
-    var differenceArray=[];
-
-    //Function to find the smallest value in an array
-    Array.min = function( array ){
-           return Math.min.apply( Math, array );
-    };
-
-
-    //Convert the HEX color in the array to RGB colors, split them up to R-G-B, then find out the difference between the "color" and the colors in the array
-    $.each(base_colors, function(index, value) { 
-        var base_color_rgb = hex2rgb(value);
-        var base_colors_r = base_color_rgb.split(',')[0];
-        var base_colors_g = base_color_rgb.split(',')[1];
-        var base_colors_b = base_color_rgb.split(',')[2];
-
-        //Add the difference to the differenceArray
-        differenceArray.push(Math.sqrt((color_r-base_colors_r)*(color_r-base_colors_r)+(color_g-base_colors_g)*(color_g-base_colors_g)+(color_b-base_colors_b)*(color_b-base_colors_b)));
-    });
-
-    //Get the lowest number from the differenceArray
-    var lowest = Array.min(differenceArray);
-
-    //Get the index for that lowest number
-    var index = differenceArray.indexOf(lowest);
-
-    //Function to convert HEX to RGB
-    function hex2rgb( colour ) {
-        var r,g,b;
-        if ( colour.charAt(0) == '#' ) {
-            colour = colour.substr(1);
-        }
-
-        r = colour.charAt(0) + colour.charAt(1);
-        g = colour.charAt(2) + colour.charAt(3);
-        b = colour.charAt(4) + colour.charAt(5);
-
-        r = parseInt( r,16 );
-        g = parseInt( g,16 );
-        b = parseInt( b ,16);
-        return r+','+g+','+b;
-    }
-
-    //Return the HEX code
-    return base_colors[index];
-}
 

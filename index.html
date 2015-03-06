@@ -23,16 +23,20 @@
             var $range  = $('#range');
             var $output = $('#output');            
 
-            var pixelOpts = [{resolution: 32}];
+            var resolution = 32;
+            var base_colors = ["ffcc00", "bbcc00", "33dd11", "aeaeae"];
+            var alpha = 0.5;
+            
+            var pixelOpts = [{resolution: resolution, base_colors: base_colors, alpha: alpha}];            
             var pixelImage = $image.get(0).closePixelate(pixelOpts);            
 
             $range.on("change mousemove", function() {
                 var res = parseInt( this.value, 10 );
                 res = Math.floor(res / 2) * 2;
                 res = Math.max(4, Math.min(100, res));
-                $output.text(res);
+                $output.text(res);                                
 
-                pixelOpts = [{resolution: res}];
+                pixelOpts = [{resolution: res, base_colors: base_colors}];
                 pixelImage.render(pixelOpts);
             });
         });
