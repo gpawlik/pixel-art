@@ -43,9 +43,7 @@
 
 
     function ClosePixelation( img, options ) {
-        this.img = img;
-
-        console.log(options);
+        this.img = img;       
 
         // create canvas
         var canvas = this.canvas = document.createElement('canvas');

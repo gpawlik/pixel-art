@@ -3,15 +3,20 @@
     <head>
         <title></title>
         <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">        
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+        <link rel="stylesheet" href="resources/css/style.css">
     </head>
     <body>
         <h1>Pixelated image</h1>
         
         <p>Change pixel resolution <input type="range" min="4" max="100" value="32" id="range" autocomplete="off" /> <span id="output">32</span></p>
+        
+        <p>Add pixel color (HEX): <input type="text" id="new-color"></p>
+        
+        <ul id="color-box"></ul>
 
         <div>
-            <img src="resources/img/boticelli_venus_and_mars_1483.jpg" id="target_image" />
+            <img src="resources/img/boticelli_venus_and_mars_1483.jpg" id="target-image" />
         </div>        
         
         <script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
@@ -19,13 +24,15 @@
         <script src="resources/js/close-pixelate.js"></script>
         <script>
         $(function() {
-            var $image  = $('#target_image');
-            var $range  = $('#range');
-            var $output = $('#output');            
+            var $image     = $('#target-image');
+            var $range     = $('#range');
+            var $new_color = $('#new-color');
+            var $color_box = $('#color-box');
+            var $output    = $('#output');            
 
             var resolution = 32;
             var base_colors = ["ffcc00", "bbcc00", "33dd11", "aeaeae"];
-            var alpha = 0.5;
+            var alpha = 1;
             
             var pixelOpts = [{resolution: resolution, base_colors: base_colors, alpha: alpha}];            
             var pixelImage = $image.get(0).closePixelate(pixelOpts);            
@@ -39,7 +46,24 @@
                 pixelOpts = [{resolution: res, base_colors: base_colors}];
                 pixelImage.render(pixelOpts);
             });
+            
+            $new_color.keypress(function(e){
+                if(e.which === 13) {
+                    var new_color = $(this).val();
+                    base_colors.push(new_color);
+                    pixelImage.render(pixelOpts);
+                    add_new_color(new_color);
+                }                
+            });
+            
+            $.each(base_colors, function(){
+                add_new_color(this);
+            });
+            
+            function add_new_color(color){
+                $color_box.append('<li style="background:#' + color + '"></li>');
+            }
         });
-        </script>        
+        </script>   
     </body>
 </html>
