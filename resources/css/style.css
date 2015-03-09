@@ -1,0 +1,12 @@
+#color-box {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+  display: inline-block; }
+  #color-box li {
+    float: left;
+    display: block;
+    width: 30px;
+    height: 30px; }
+
+/*# sourceMappingURL=style.css.map */
