@@ -11,13 +11,15 @@
         
         <p>Change pixel resolution <input type="range" min="4" max="100" value="32" id="range" autocomplete="off" /> <span id="output">32</span></p>
         
-        <p>Add pixel color (HEX): <input type="text" id="new-color"></p>
+        <p>Add pixel color (HEX): #<input type="text" id="new-color"></p>
         
         <ul id="color-box"></ul>
 
         <div>
             <img src="resources/img/boticelli_venus_and_mars_1483.jpg" id="target-image" />
         </div>        
+        
+        <a href="#" class="button" id="btn-download" download="my-file-name.png">Download</a>        
         
         <script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
         
@@ -28,7 +30,8 @@
             var $range     = $('#range');
             var $new_color = $('#new-color');
             var $color_box = $('#color-box');
-            var $output    = $('#output');            
+            var $output    = $('#output'); 
+            var $download  = $('#btn-download');
 
             var resolution = 32;
             var base_colors = ["ffcc00", "bbcc00", "33dd11", "aeaeae"];
@@ -50,9 +53,16 @@
             $new_color.keypress(function(e){
                 if(e.which === 13) {
                     var new_color = $(this).val();
-                    base_colors.push(new_color);
-                    pixelImage.render(pixelOpts);
-                    add_new_color(new_color);
+                    var isHex  = /(^[0-9A-F]{6}$)|(^[0-9A-F]{3}$)/i.test(new_color);                    
+                    if(isHex) {
+                        base_colors.push(new_color);
+                        pixelImage.render(pixelOpts);
+                        add_new_color(new_color);
+                        $new_color.val('');
+                    }
+                    else {
+                        console.log('input not valid!');
+                    }
                 }                
             });
             
@@ -60,9 +70,15 @@
                 add_new_color(this);
             });
             
+            $download.on('click', function (e) {
+                var dataURL = pixelImage.canvas.toDataURL('image/png');
+                $(this).attr('href', dataURL);                
+            }); 
+            
             function add_new_color(color){
                 $color_box.append('<li style="background:#' + color + '"></li>');
-            }
+            }                                               
+            
         });
         </script>   
     </body>

@@ -56,7 +56,7 @@
         this.render( options );
 
         // replace image with canvas
-        img.parentNode.replaceChild( canvas, img );
+        img.parentNode.replaceChild( canvas, img );      
     }
 
     ClosePixelation.prototype.render = function( options ) {
@@ -204,6 +204,9 @@
             var r, g, b;
             if ( color.charAt(0) === '#' ) {
                 color = color.substr(1);
+            }
+            if(color.length === 3) {
+                color = color.charAt(0) + color.charAt(0) + color.charAt(1) + color.charAt(1) + color.charAt(2) + color.charAt(2);
             }
 
             r = color.charAt(0) + color.charAt(1);
