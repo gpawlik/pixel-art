@@ -4,82 +4,31 @@
         <title></title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
         <link rel="stylesheet" href="resources/css/style.css">
     </head>
     <body>
-        <h1>Pixelated image</h1>
-        
-        <p>Change pixel resolution <input type="range" min="4" max="100" value="32" id="range" autocomplete="off" /> <span id="output">32</span></p>
-        
-        <p>Add pixel color (HEX): #<input type="text" id="new-color"></p>
-        
-        <ul id="color-box"></ul>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-4">
+                    <h1>Pixelated image</h1>
 
-        <div>
-            <img src="resources/img/boticelli_venus_and_mars_1483.jpg" id="target-image" />
-        </div>        
-        
-        <a href="#" class="button" id="btn-download" download="my-file-name.png">Download</a>        
-        
+                    <p>Change pixel resolution <input type="range" min="4" max="100" value="32" id="range" autocomplete="off" /> <span id="output">32</span></p>
+
+                    <p>Add pixel color (HEX): #<input type="text" id="new-color"></p>
+
+                    <ul id="color-box"></ul>
+
+                    <p><a href="#" class="btn btn-primary" id="btn-download" download="my-file-name.png">Download the image</a></p>
+                </div>
+
+                <div class="col-md-8">            
+                    <img src="resources/img/boticelli_venus_and_mars_1483.jpg" id="target-image" />
+                </div>        
+            </div>
+        </div>
         <script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
-        
-        <script src="resources/js/close-pixelate.js"></script>
-        <script>
-        $(function() {
-            var $image     = $('#target-image');
-            var $range     = $('#range');
-            var $new_color = $('#new-color');
-            var $color_box = $('#color-box');
-            var $output    = $('#output'); 
-            var $download  = $('#btn-download');
-
-            var resolution = 32;
-            var base_colors = ["ffcc00", "bbcc00", "33dd11", "aeaeae"];
-            var alpha = 1;
-            
-            var pixelOpts = [{resolution: resolution, base_colors: base_colors, alpha: alpha}];            
-            var pixelImage = $image.get(0).closePixelate(pixelOpts);            
-
-            $range.on("change mousemove", function() {
-                var res = parseInt( this.value, 10 );
-                res = Math.floor(res / 2) * 2;
-                res = Math.max(4, Math.min(100, res));
-                $output.text(res);                                
-
-                pixelOpts = [{resolution: res, base_colors: base_colors}];
-                pixelImage.render(pixelOpts);
-            });
-            
-            $new_color.keypress(function(e){
-                if(e.which === 13) {
-                    var new_color = $(this).val();
-                    var isHex  = /(^[0-9A-F]{6}$)|(^[0-9A-F]{3}$)/i.test(new_color);                    
-                    if(isHex) {
-                        base_colors.push(new_color);
-                        pixelImage.render(pixelOpts);
-                        add_new_color(new_color);
-                        $new_color.val('');
-                    }
-                    else {
-                        console.log('input not valid!');
-                    }
-                }                
-            });
-            
-            $.each(base_colors, function(){
-                add_new_color(this);
-            });
-            
-            $download.on('click', function (e) {
-                var dataURL = pixelImage.canvas.toDataURL('image/png');
-                $(this).attr('href', dataURL);                
-            }); 
-            
-            function add_new_color(color){
-                $color_box.append('<li style="background:#' + color + '"></li>');
-            }                                               
-            
-        });
-        </script>   
+        <script src="resources/js/pixel-art.js"></script>
+        <script src="resources/js/scripts.js"></script>
     </body>
 </html>
