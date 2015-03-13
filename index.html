@@ -13,7 +13,13 @@
                 <div class="col-md-4">
                     <h1>Pixelated image</h1>
 
-                    <p>Change pixel resolution <input type="range" min="4" max="100" value="32" id="range" autocomplete="off" /> <span id="output">32</span></p>
+                    <p id="status">File API & FileReader API not supported</p>
+                    
+                    <p><input type=file></p>
+                    
+                    <p>Select an image from your machine to read the contents of the file without using a server</p>                                         
+
+                    <p>Change pixel resolution <input type="range" min="2" max="100" value="32" id="range" autocomplete="off" /> <span id="output">32</span></p>
 
                     <p>Add pixel color (HEX): #<input type="text" id="new-color"></p>
 
@@ -24,11 +30,47 @@
 
                 <div class="col-md-8">            
                     <img src="resources/img/boticelli_venus_and_mars_1483.jpg" id="target-image" />
+                    
+                    <div id="uploaded-image"></div>
                 </div>        
             </div>
         </div>
         <script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
         <script src="resources/js/pixel-art.js"></script>
         <script src="resources/js/scripts.js"></script>
+        
+<script>
+var upload = document.getElementsByTagName('input')[0],
+    holder = document.getElementById('uploaded-image'),
+    state = document.getElementById('status');
+
+if (typeof window.FileReader === 'undefined') {
+  state.className = 'fail';
+} else {
+  state.className = 'success';
+  state.innerHTML = 'File API & FileReader available';
+}
+ 
+upload.onchange = function (e) {
+  e.preventDefault();
+
+  var file = upload.files[0],
+      reader = new FileReader();
+  reader.onload = function (event) {
+    var img = new Image();
+    img.src = event.target.result;
+    // note: no onload required since we've got the dataurl...I think! :)
+    if (img.width > 560) { // holder width
+      img.width = 560;
+    }
+    holder.innerHTML = '';
+    holder.appendChild(img);
+  };
+  reader.readAsDataURL(file);
+
+  return false;
+};
+</script>        
+        
     </body>
 </html>
